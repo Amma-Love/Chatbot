@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Amma's‑Love Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="description"
+    content="Interactive FAQ chatbot for Amma's‑Love: student-run service building affordable websites and AI chatbots for small businesses."
+  />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #fff3e0, #ffe5e0);
+      color: #222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .page-wrapper {
+      width: 100%;
+      max-width: 960px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      padding: 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 20px;
+    }
+    @media (max-width: 768px) {
+      .page-wrapper {
+        grid-template-columns: 1fr;
+        border-radius: 0;
+        min-height: 100vh;
+      }
+    }
+    .info-panel {
+      padding: 10px 5px 10px 5px;
+    }
+    .info-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #ff6f61;
+    }
+    .info-subtitle {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 14px;
+    }
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #fff5f2;
+      color: #d84315;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .section-heading {
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 12px;
+      margin-bottom: 6px;
+    }
+    .bullet-list {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 13px;
+      color: #444;
+    }
+    .bullet-list li {
+      margin-bottom: 4px;
+    }
+    .highlight-box {
+      margin-top: 10px;
+      background: #fff8e1;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px;
+      border: 1px solid #ffe082;
+    }
+    .email-tip {
+      font-size: 12px;
+      color: #555;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed #eee;
+    }
+
+    /* Chatbot styles */
+    .chat-wrapper {
+      border-radius: 14px;
+      border: 1px solid #ffe0d5;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 380px;
+      background: #fffdfc;
+    }
+    .chat-header {
+      background: #ff6f61;
+      color: #fff;
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chat-header span {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+    .chat-log {
+      padding: 10px;
+      flex: 1;
+      overflow-y: auto;
+      font-size: 13px;
+      background: #fafafa;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .msg {
+      max-width: 90%;
+      padding: 7px 9px;
+      border-radius: 8px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .bot-msg {
+      background: #ffe3dd;
+      align-self: flex-start;
+    }
+    .user-msg {
+      background: #e0f2ff;
+      align-self: flex-end;
+      text-align: right;
+    }
+    .chat-input-row {
+      display: flex;
+      border-top: 1px solid #f0f0f0;
+    }
+    #chat-input {
+      flex: 1;
+      border: none;
+      padding: 9px 10px;
+      font-size: 13px;
+      outline: none;
+    }
+    #chat-send {
+      border: none;
+      background: #ff6f61;
+      color: #fff;
+      padding: 0 14px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    #chat-send:hover {
+      background: #ff4a3f;
+    }
+    .quick-questions {
+      padding: 6px 8px;
+      border-top: 1px solid #ffe0d5;
+      background: #fffaf8;
+      font-size: 11px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .quick-chip {
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: #fff;
+      border: 1px solid #ffd0c1;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .quick-chip:hover {
+      background: #ffe3dd;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="info-panel">
+      <div class="pill">Amma's‑Love • Student‑Run • AI‑Powered</div>
+      <div class="info-title">Amma's‑Love FAQ Assistant</div>
+      <div class="info-subtitle">
+        Share this page link in your emails. Anyone opening it can chat and get answers about your services, offers, pricing, timelines, and process.
+      </div>
+
+      <div class="section-heading">What can this chatbot answer?</div>
+      <ul class="bullet-list">
+        <li>What Amma's‑Love is and who runs it.</li>
+        <li>Website services, chatbot services, and design add‑ons.</li>
+        <li>Festival offer ideas (New Year + Makara Sankranti) and regular pricing ranges.</li>
+        <li>Delivery time, how the process works, and what clients need to provide.</li>
+        <li>Payment terms (advance, balance, subscriptions) and basic limitations.</li>
+      </ul>
+
+      <div class="section-heading">How to use this file</div>
+      <ul class="bullet-list">
+        <li>Save this as <code>ammas_love_chatbot.html</code> and upload it to your hosting (or Netlify/Vercel/static host).</li>
+        <li>Copy the URL and paste it into your emails or WhatsApp as: “Chat with my assistant here to know everything about my services.”</li>
+      </ul>
+
+      <div class="highlight-box">
+        You can edit the answers or pricing later by opening this file in a code editor and updating the
+        <code>qaPairs</code> section in the JavaScript.
+      </div>
+
+      <div class="email-tip">
+        Email tip: Add a line like this in your email text –<br />
+        <em>“Have questions? Chat with my Amma's‑Love assistant here: [your‑chatbot‑link]”</em>
+      </div>
+    </div>
+
+    <div class="chat-panel">
+      <div class="chat-wrapper">
+        <div class="chat-header">
+          <div>Amma's‑Love Assistant</div>
+          <span>Ask about services, offers, pricing, or process</span>
+        </div>
+        <div id="chat-log" class="chat-log"></div>
+        <div class="quick-questions">
+          <div class="quick-chip" data-q="What is Amma's-Love?">What is Amma's‑Love?</div>
+          <div class="quick-chip" data-q="What services do you offer?">Services</div>
+          <div class="quick-chip" data-q="Tell me your festival offer.">Festival offer</div>
+          <div class="quick-chip" data-q="How much do websites cost?">Website price</div>
+          <div class="quick-chip" data-q="How long will you take to deliver?">Delivery time</div>
+          <div class="quick-chip" data-q="How do I pay you?">Payments</div>
+        </div>
+        <div class="chat-input-row">
+          <input
+            id="chat-input"
+            type="text"
+            placeholder="Type your question and press Enter..."
+          />
+          <button id="chat-send">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Knowledge base for Amma's‑Love
+    const qaPairs = [
+      // About Amma's‑Love
+      {
+        patterns: [
+          "what is amma's-love",
+          "what is ammas-love",
+          "about amma's-love",
+          "about ammas love",
+          "who are you",
+          "who runs this",
+          "who made this",
+          "about you"
+        ],
+        answer:
+"Amma's‑Love is a student‑run service that uses AI and prompt engineering to build fast, affordable websites and simple AI chatbots for small businesses, tutors, clinics, salons, and freelancers.\n\nThe goal is to give small businesses a clean online presence and basic automation at a fraction of typical agency pricing, while still keeping quality and speed very high."
+      },
+
+      // Services overview
+      {
+        patterns: [
+          "what services",
+          "what do you do",
+          "what all you do",
+          "services you offer",
+          "list your services",
+          "offerings",
+          "what can you build"
+        ],
+        answer:
+"Right now Amma's‑Love focuses on three main services:\n\n1) Websites – landing pages, portfolio sites, and small business/shop/clinic/tuition websites.\n2) Simple AI chatbots – FAQ bots that answer common questions and capture leads.\n3) Design add‑ons – basic posters, social media creatives, or simple brochures generated with AI and refined manually.\n\nEverything is designed to be fast, affordable, and easy for you to maintain."
+      },
+
+      // Website types
+      {
+        patterns: [
+          "website types",
+          "what kind of websites",
+          "types of websites",
+          "do you make ecommerce",
+          "do you build websites"
+        ],
+        answer:
+"Typical website types Amma's‑Love can build:\n\n• Landing page – single page to explain your offer and collect leads.\n• Portfolio – for freelancers, students, or professionals to showcase work.\n• Small business site – for shops, salons, clinics, tuition centers, etc., usually 3‑7 pages.\n\nHeavy custom e‑commerce with inventory, logistics, and complex dashboards is not the main focus right now, but simple product listing + contact/WhatsApp enquiry flows are possible."
+      },
+
+      // Pricing – general philosophy
+      {
+        patterns: [
+          "why so cheap",
+          "why low price",
+          "how are prices so low",
+          "pricing strategy",
+          "how is pricing"
+        ],
+        answer:
+"Typical Indian market pricing for websites ranges from a few thousand rupees for very basic sites up to ₹50,000 or more for custom work, and e‑commerce projects can go even higher.\n\nAmma's‑Love intentionally stays on the lower side using AI tools, templates, and a lean workflow. The goals are:\n• Be affordable for small/local businesses.\n• Build portfolio and case studies.\n• Still keep strong margins by saving development time."
+      },
+
+      // Example price ranges (you can edit the numbers later)
+      {
+        patterns: [
+          "how much do websites cost",
+          "website price",
+          "cost of website",
+          "price for website",
+          "pricing for website",
+          "website charges"
+        ],
+        answer:
+"Here is an example pricing structure (you can adjust these numbers later if you like):\n\n• Landing Page: around ₹500–₹2,000 depending on design and content.\n• Portfolio Website: around ₹1,200–₹3,500 for a few sections and pages.\n• Small Business / Shop / Clinic Site: around ₹1,999–₹5,000 for a multi‑page site.\n\nExact quotes depend on how many pages, custom features, and content work are needed."
+      },
+
+      // Festival offer
+      {
+        patterns: [
+          "festival offer",
+          "new year offer",
+          "makar sankranti",
+          "makara sankranti",
+          "sankranthi offer",
+          "promo offer",
+          "promotion",
+          "discount"
+        ],
+        answer:
+"For a New Year + Makara Sankranti style promo, Amma's‑Love can temporarily drop prices to make it extremely easy to start:\n\n• Landing Page: around ₹500.\n• Portfolio Website: around ₹1,200.\n• Small Shop/Clinic/Tuition Website: around ₹1,999.\n• Bundle Idea: Website + basic chatbot for 3 months around ₹2,999.\n\nThe exact discounts and dates can be customized per campaign, and after the promo ends prices move back closer to the regular range."
+      },
+
+      // Chatbot pricing
+      {
+        patterns: [
+          "chatbot price",
+          "price for chatbot",
+          "cost of chatbot",
+          "ai chatbot cost",
+          "chatbot charges",
+          "bot subscription"
+        ],
+        answer:
+"Chatbots are usually billed as a monthly subscription because they run continuously and may need updates:\n\n• Basic FAQ chatbot: can start in the few hundred rupees per month range during a promo (for example around ₹299/month).\n• Regular basic pricing outside promos is more like ₹1,000+/month depending on integrations and traffic.\n\nThe idea is to keep it affordable compared to the time and effort it saves you."
+      },
+
+      // Delivery time
+      {
+        patterns: [
+          "delivery time",
+          "how long will it take",
+          "time to deliver",
+          "how many days",
+          "when will my website be ready",
+          "timeline"
+        ],
+        answer:
+"Typical delivery targets (if content is ready):\n\n• Simple landing page: about 2 days.\n• Portfolio or small business site: about 3–5 days.\n• Basic FAQ chatbot: 1–3 days once questions/answers are agreed.\n\nLarger or more customized work can take longer, but speed is a priority and timelines are discussed clearly before starting."
+      },
+
+      // Process / workflow
+      {
+        patterns: [
+          "how does it work",
+          "process",
+          "workflow",
+          "steps",
+          "what is the process",
+          "how do we start"
+        ],
+        answer:
+"Typical workflow with Amma's‑Love:\n\n1) Short call or chat to understand your business, goals, and budget.\n2) You share basic content: logo (if any), photos, services, pricing, contact details, and any reference sites you like.\n3) Amma's‑Love uses AI + prompt engineering to generate layout, content drafts, and code.\n4) You review a first version and request changes.\n5) Final revisions are made and the site/chatbot is deployed.\n\nYou always see the work before final payment."
+      },
+
+      // What client must provide
+      {
+        patterns: [
+          "what do you need from me",
+          "what do you need",
+          "what should i give",
+          "what should i provide",
+          "client requirements"
+        ],
+        answer:
+"To build a good site or chatbot, Amma's‑Love will usually ask you for:\n\n• Business name and tagline.\n• Short description of what you do.\n• List of services with brief details and prices (if public).\n• Contact details (phone, WhatsApp, email, address, map link).\n• Any photos, logo, or brand colors.\n• For chatbots: a list of the most common questions customers ask.\n\nIf you don't have polished text, rough bullet points are enough to start – the rest can be refined with AI."
+      },
+
+      // Payment terms
+      {
+        patterns: [
+          "how do i pay",
+          "payment",
+          "payments",
+          "advance",
+          "upi",
+          "razorpay",
+          "payment terms"
+        ],
+        answer:
+"Common payment structure:\n\n• Websites: 50% advance to start, 50% after final approval but before going fully live on your main domain.\n• Chatbots: usually paid monthly in advance (for example on the 1st of every month).\n• Payment options: UPI or payment links (and bank transfer if needed).\n\nExact terms are clearly agreed before work begins."
+      },
+
+      // Revisions / changes
+      {
+        patterns: [
+          "revisions",
+          "changes",
+          "can i change later",
+          "edit content",
+          "update later",
+          "how many revisions"
+        ],
+        answer:
+"Reasonable revisions are included, especially in the first version:\n\n• Content edits (text, photos, colors) are usually fine in the first 1–2 revision rounds.\n• Structural changes (new sections, pages, or complex features) may increase price or delivery time.\n\nThe aim is always to keep it fair: clear scope, clear price, and a site you are happy with."
+      },
+
+      // Tech / tools
+      {
+        patterns: [
+          "what tech do you use",
+          "tech stack",
+          "which tools",
+          "do you code from scratch",
+          "how do you build"
+        ],
+        answer:
+"Amma's‑Love leans heavily on modern tools:\n\n• AI (prompt engineering with large language models) to generate and refine content and front‑end code.\n• Modern web hosting platforms for fast, secure static sites.\n• Simple bot platforms or custom flows for FAQ‑style chatbots.\n\nThis keeps development time short and pricing low while still giving you modern, responsive websites."
+      },
+
+      // Who runs it / student status
+      {
+        patterns: [
+          "are you a student",
+          "grade 10",
+          "grade 11",
+          "school",
+          "are you doing this while studying",
+          "boards"
+        ],
+        answer:
+"Amma's‑Love is run by students who are still in school and serious about their studies.\n\nThe business is designed to fit around school by:\n• Focusing on small, well‑defined projects.\n• Batching most work into evenings and weekends.\n• Using AI tools to save manual time.\n\nClients still get professional‑quality work, but at friendlier prices, because overhead is low and the team is lean."
+      },
+
+      // Suitable customers
+      {
+        patterns: [
+          "who is this for",
+          "who can use this",
+          "ideal client",
+          "what kind of clients",
+          "target customers"
+        ],
+        answer:
+"Amma's‑Love is a great fit for:\n\n• Small shops, salons, clinics, and tuition centers.\n• Freelancers and students who need a portfolio.\n• Local service businesses just coming online for the first time.\n• People who want something fast, clean, and affordable instead of a huge, complex system.\n\nIf you need a very large, enterprise‑grade platform, this may not be the right fit yet."
+      },
+
+      // Support / after go‑live
+      {
+        patterns: [
+          "support",
+          "after go live",
+          "after launch",
+          "maintenance",
+          "what about updates"
+        ],
+        answer:
+"After launch, small updates (like text tweaks or minor image changes) can usually be done quickly.\n\nFor ongoing heavy changes or frequent new features, Amma's‑Love can discuss a maintenance plan or simple per‑update pricing so that expectations stay clear and predictable."
+      },
+
+      // Contact / next steps
+      {
+        patterns: [
+          "how to contact",
+          "how to reach you",
+          "contact",
+          "whatsapp",
+          "email",
+          "next steps"
+        ],
+        answer:
+"To move forward, the usual next step is:\n\n1) You send your contact details (WhatsApp or email) and a short description of your business.\n2) A short chat or call is scheduled to understand your needs and budget.\n3) You get a clear proposal with scope, price, and timeline.\n\nIn your emails or messages, you can simply say: “I’m interested in a website/chatbot from Amma's‑Love. Here are my details and what I do.”"
+      },
+
+      // Fallback help
+      {
+        patterns: [
+          "help",
+          "what can you do",
+          "how to use this",
+          "how to ask",
+          "what should i ask"
+        ],
+        answer:
+"You can ask questions like:\n\n• “What is Amma's‑Love?”\n• “What services do you offer?”\n• “How much does a website cost?”\n• “Tell me your festival offer.”\n• “How long will it take to deliver?”\n• “How do I pay you?”\n\nThe assistant will try to match your question to the closest answer."
+      }
+    ];
+
+    const fallbackAnswers = [
+      "I didn’t fully understand that. Try asking about services, offers, pricing, delivery time, process, or payments.",
+      "I’m not sure about that specific question yet. You can ask me about what Amma's‑Love is, what we offer, prices, and how the process works.",
+      "That one is a bit outside my current training. Try rephrasing around services, pricing, timelines, or how to get started."
+    ];
+
+    function findAnswer(userInput) {
+      const text = userInput.toLowerCase();
+      for (const qa of qaPairs) {
+        for (const pattern of qa.patterns) {
+          if (text.includes(pattern)) {
+            return qa.answer;
+          }
+        }
+      }
+      return fallbackAnswers[Math.floor(Math.random() * fallbackAnswers.length)];
+    }
+
+    function addMessage(text, from = "bot") {
+      const log = document.getElementById("chat-log");
+      const div = document.createElement("div");
+      div.className = "msg " + (from === "bot" ? "bot-msg" : "user-msg");
+      div.textContent = text;
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function handleUserMessage(inputText) {
+      const inputEl = document.getElementById("chat-input");
+      const text = (inputText !== undefined ? inputText : inputEl.value).trim();
+      if (!text) return;
+      addMessage(text, "user");
+      const reply = findAnswer(text);
+      setTimeout(() => addMessage(reply, "bot"), 150);
+      if (inputText === undefined) {
+        inputEl.value = "";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const inputEl = document.getElementById("chat-input");
+      const sendBtn = document.getElementById("chat-send");
+      const quickChips = document.querySelectorAll(".quick-chip");
+
+      // Initial welcome message
+      addMessage(
+        "Hi! 👋 I’m the Amma's‑Love assistant.\n\nAsk me anything about:\n• What Amma's‑Love is\n• Services (websites, chatbots, design)\n• Festival / promo offers\n• Pricing ranges\n• Delivery timelines\n• Payment terms and process",
+        "bot"
+      );
+
+      sendBtn.addEventListener("click", () => handleUserMessage());
+      inputEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          handleUserMessage();
+        }
+      });
+      quickChips.forEach(chip => {
+        chip.addEventListener("click", () => {
+          const q = chip.getAttribute("data-q");
+          handleUserMessage(q);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
